@@ -74,7 +74,6 @@ function buildUrl(s) {
   if (s.maxMileage) params.set('maxMileage', s.maxMileage);
   if (s.minYear) params.set('minYear', s.minYear);
   if (s.maxYear) params.set('maxYear', s.maxYear);
-  params.set('sortBy', 'creation_time_descend');
   params.set('exact', 'false');
   if (s.radius) params.set('radius_in_km', s.radius);
   if (s.sellerType) params.set('sellerType', s.sellerType);
