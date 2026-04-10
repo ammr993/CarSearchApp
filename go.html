@@ -1,18 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Redirecting...</title>
+<title>Open Search</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #121217; color: #e4e4e8;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 1.5rem;
+  }
+  .card {
+    background: #1c1c24; border: 1px solid #2a2a36; border-radius: 12px;
+    padding: 1.5rem; max-width: 420px; width: 100%; text-align: center;
+  }
+  h1 { font-size: 1.1rem; margin-bottom: 1rem; }
+  .url-box {
+    background: #16161d; border: 1px solid #2a2a36; border-radius: 8px;
+    padding: 0.75rem; margin-bottom: 1rem; word-break: break-all;
+    font-size: 0.78rem; color: #8b8b9e; text-align: left;
+    max-height: 4.5rem; overflow-y: auto;
+  }
+  .btn {
+    display: block; width: 100%; padding: 0.75rem; border: none;
+    border-radius: 8px; font-size: 0.95rem; font-family: inherit;
+    cursor: pointer; margin-bottom: 0.5rem; font-weight: 600;
+  }
+  .btn-primary { background: #5b8def; color: #fff; }
+  .btn-secondary { background: #2a2a36; color: #e4e4e8; }
+  .btn-back { background: transparent; color: #8b8b9e; font-weight: 400; }
+  .hint {
+    font-size: 0.78rem; color: #5c5c70; margin-top: 0.75rem;
+    line-height: 1.5; border-top: 1px solid #2a2a36; padding-top: 0.75rem;
+  }
+  .hint strong { color: #8b8b9e; }
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    background: #4caf7d; color: #fff; padding: 0.5rem 1.25rem;
+    border-radius: 8px; font-size: 0.85rem; display: none;
+  }
+</style>
 </head>
 <body>
+<div class="card">
+  <h1>Open in Safari</h1>
+  <div class="url-box" id="url-display"></div>
+  <button class="btn btn-primary" id="copy-btn">Copy Link</button>
+  <button class="btn btn-secondary" id="open-btn">Try Opening Directly</button>
+  <a href="./" class="btn btn-back">Back to Dashboard</a>
+  <p class="hint">
+    <strong>Tip:</strong> If links keep opening in the Facebook app,
+    long-press the "Try Opening" button and choose <strong>"Open in Safari"</strong>.
+    iOS will remember your choice for all future Facebook links.
+  </p>
+</div>
+<div class="toast" id="toast">Link copied!</div>
 <script>
-var url = new URLSearchParams(window.location.search).get('url');
-if (url && url.indexOf('https://www.facebook.com/') === 0) {
-  window.location.replace(url);
-} else {
-  window.location.replace('./');
-}
+  var params = new URLSearchParams(window.location.search);
+  var url = params.get('url');
+  var label = params.get('label') || 'Facebook Marketplace';
+
+  if (!url || url.indexOf('https://www.facebook.com/') !== 0) {
+    window.location.replace('./');
+  }
+
+  document.querySelector('h1').textContent = label;
+  document.getElementById('url-display').textContent = url;
+
+  // Make the "Try Opening" button a real link so long-press works
+  var openBtn = document.getElementById('open-btn');
+  var link = document.createElement('a');
+  link.href = url;
+  link.target = '_blank';
+  link.rel = 'noopener';
+  link.className = openBtn.className;
+  link.textContent = openBtn.textContent;
+  link.style.display = 'block';
+  link.style.textDecoration = 'none';
+  link.style.textAlign = 'center';
+  openBtn.replaceWith(link);
+
+  document.getElementById('copy-btn').addEventListener('click', function() {
+    navigator.clipboard.writeText(url).then(function() {
+      var toast = document.getElementById('toast');
+      toast.style.display = 'block';
+      setTimeout(function() { toast.style.display = 'none'; }, 1500);
+    });
+  });
 </script>
 </body>
 </html>
