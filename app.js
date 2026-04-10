@@ -205,24 +205,10 @@ function escapeAttr(str) {
 }
 
 /* ===== Search Actions ===== */
-function openInBrowser(url, label) {
-  // Route through go.html to work around iOS Universal Links,
-  // which would otherwise open facebook.com in the Facebook app.
-  const redirectUrl = './go.html?url=' + encodeURIComponent(url) +
-    '&label=' + encodeURIComponent(label || '');
-  const a = document.createElement('a');
-  a.href = redirectUrl;
-  a.target = '_blank';
-  a.rel = 'noopener noreferrer';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-
 function openSearch(index) {
   const s = searches[index];
   const url = buildUrl(s);
-  openInBrowser(url, s.label);
+  window.open(url, '_blank', 'noopener');
   s.lastChecked = Date.now();
   saveSearches();
   render();
@@ -230,7 +216,7 @@ function openSearch(index) {
 
 function openAllSearches() {
   searches.forEach((s, i) => {
-    openInBrowser(buildUrl(s), s.label);
+    window.open(buildUrl(s), '_blank', 'noopener');
     s.lastChecked = Date.now();
   });
   saveSearches();
