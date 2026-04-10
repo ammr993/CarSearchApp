@@ -13,11 +13,11 @@ const DEFAULT_SETTINGS = {
 
 const DEFAULT_SEARCHES = [
   { id: genId(), label: 'Honda Fit', urlType: 'slug', slug: 'honda-fit', city: 'chicago', minYear: 2011, maxYear: 2014, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
-  { id: genId(), label: 'Mazda Mazda3', urlType: 'query', slug: 'mazda+mazda3', city: 'chicago', minYear: 2015, maxYear: null, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
+  { id: genId(), label: 'Mazda Mazda3', urlType: 'slug', slug: 'mazda-3', city: 'category', minYear: 2015, maxYear: null, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
   { id: genId(), label: 'Ford Focus', urlType: 'slug', slug: 'ford-focus', city: 'chicago', minYear: 2012, maxYear: 2015, maxPrice: 9000, maxMileage: 130000, transmission: 'manual', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
   { id: genId(), label: 'Subaru Forester', urlType: 'slug', slug: 'subaru-forester', city: 'chicago', minYear: 2012, maxYear: 2013, maxPrice: 9000, maxMileage: 130000, transmission: 'manual', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
   { id: genId(), label: 'Toyota RAV4', urlType: 'slug', slug: 'toyota-rav4', city: 'chicago', minYear: 2009, maxYear: 2011, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
-  { id: genId(), label: 'Lexus RX 330', urlType: 'query', slug: 'lexus+rx+330', city: 'chicago', minYear: 2005, maxYear: 2006, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
+  { id: genId(), label: 'Lexus RX 330', urlType: 'slug', slug: 'lexus-rx', city: 'chicago', minYear: 2005, maxYear: 2006, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
   { id: genId(), label: 'Toyota Prius', urlType: 'slug', slug: 'toyota-prius', city: 'chicago', minYear: 2013, maxYear: null, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
 ];
 
@@ -70,9 +70,6 @@ function buildUrl(s) {
   const city = encodeURIComponent(s.city || settings.city || 'chicago');
   const params = new URLSearchParams();
 
-  if (s.urlType === 'query') {
-    params.set('query', s.slug);
-  }
   if (s.maxPrice) params.set('maxPrice', s.maxPrice);
   if (s.maxMileage) params.set('maxMileage', s.maxMileage);
   if (s.minYear) params.set('minYear', s.minYear);
@@ -83,9 +80,6 @@ function buildUrl(s) {
   if (s.sellerType) params.set('sellerType', s.sellerType);
   if (s.transmission) params.set('transmission', s.transmission);
 
-  if (s.urlType === 'query') {
-    return `${base}/${city}/vehicles?${params.toString()}`;
-  }
   return `${base}/${city}/${encodeURIComponent(s.slug)}?${params.toString()}`;
 }
 
@@ -129,10 +123,6 @@ function render() {
         ? '<span class="badge badge-auto">Auto</span>'
         : '';
 
-    const queryBadge = s.urlType === 'query'
-      ? '<span class="badge badge-query">Query</span>'
-      : '';
-
     const staleBadge = isStale(s.lastChecked)
       ? '<span class="badge badge-stale">Stale</span>'
       : '';
@@ -155,7 +145,6 @@ function render() {
       <div class="card-meta">
         ${yearText ? `<span class="badge badge-years">${yearText}</span>` : ''}
         ${transmissionBadge}
-        ${queryBadge}
         ${staleBadge}
       </div>
       <span class="card-timestamp" data-ts="${s.lastChecked || ''}">${relativeTime(s.lastChecked)}</span>
@@ -296,14 +285,9 @@ document.getElementById('confirm-cancel').addEventListener('click', () => {
 });
 
 /* ===== Add/Edit Form ===== */
-const formUrlType = { value: 'slug' };
-
 function resetForm() {
   searchForm.reset();
   document.getElementById('form-id').value = '';
-  formUrlType.value = 'slug';
-  updateUrlTypeUI();
-  // Apply defaults
   document.getElementById('form-city').value = settings.city || '';
   document.getElementById('form-max-price').value = settings.maxPrice || '';
   document.getElementById('form-max-mileage').value = settings.maxMileage || '';
@@ -317,8 +301,6 @@ function openEditForm(index) {
   const s = searches[index];
   document.getElementById('form-id').value = s.id;
   document.getElementById('form-label').value = s.label;
-  formUrlType.value = s.urlType;
-  updateUrlTypeUI();
   document.getElementById('form-slug').value = s.slug;
   document.getElementById('form-city').value = s.city || settings.city || '';
   document.getElementById('form-min-year').value = s.minYear || '';
@@ -334,35 +316,6 @@ function openEditForm(index) {
   modalOverlay.hidden = false;
 }
 
-function updateUrlTypeUI() {
-  document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.value === formUrlType.value);
-  });
-  const slugLabel = document.getElementById('slug-label');
-  const slugInput = document.getElementById('form-slug');
-  const slugHint = document.getElementById('slug-hint');
-  const typeHint = document.getElementById('url-type-hint');
-  if (formUrlType.value === 'query') {
-    slugLabel.textContent = 'Query';
-    slugInput.placeholder = 'e.g. lexus+rx+330';
-    slugHint.textContent = 'The search query (use + for spaces)';
-    typeHint.textContent = 'Use this pattern for makes that don\'t have a URL slug, like Lexus.';
-  } else {
-    slugLabel.textContent = 'Slug';
-    slugInput.placeholder = 'e.g. honda-fit';
-    slugHint.textContent = 'The URL segment for this make/model (lowercase, hyphenated)';
-    typeHint.innerHTML = 'Most makes work with a slug like <code>honda-fit</code>. If the search returns no results, switch to Pattern B.';
-  }
-}
-
-// Toggle buttons
-document.querySelectorAll('.toggle-group .toggle-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    formUrlType.value = btn.dataset.value;
-    updateUrlTypeUI();
-  });
-});
-
 // Open add form
 document.getElementById('add-search-btn').addEventListener('click', () => {
   resetForm();
@@ -377,7 +330,6 @@ searchForm.addEventListener('submit', (e) => {
   const data = {
     id: id || genId(),
     label: document.getElementById('form-label').value.trim(),
-    urlType: formUrlType.value,
     slug: document.getElementById('form-slug').value.trim(),
     city: document.getElementById('form-city').value.trim() || settings.city || 'chicago',
     minYear: parseInt(document.getElementById('form-min-year').value) || null,

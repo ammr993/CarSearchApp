@@ -57,18 +57,9 @@
         </div>
 
         <div class="form-group">
-          <label>URL Type</label>
-          <div class="toggle-group">
-            <button type="button" class="toggle-btn active" data-value="slug">Pattern A (Slug)</button>
-            <button type="button" class="toggle-btn" data-value="query">Pattern B (Query)</button>
-          </div>
-          <p id="url-type-hint" class="hint">Most makes work with a slug like <code>honda-fit</code>. If the search returns no results, switch to Pattern B.</p>
-        </div>
-
-        <div class="form-group">
           <label for="form-slug" id="slug-label">Slug</label>
           <input type="text" id="form-slug" placeholder="e.g. honda-fit" required>
-          <p class="hint" id="slug-hint">The URL segment for this make/model (lowercase, hyphenated)</p>
+          <p class="hint" id="slug-hint">The URL segment for this make/model (lowercase, hyphenated). Example: <code>honda-fit</code>, <code>lexus-rx</code></p>
         </div>
 
         <div class="form-row">
