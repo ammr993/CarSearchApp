@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace Car Search</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1>Marketplace Car Search</h1>
+    </div>
+    <div class="header-right">
+      <button id="open-all-btn" class="btn btn-primary" title="Open all searches in new tabs">Open All</button>
+      <button id="add-search-btn" class="btn btn-accent" title="Add a new search">+ Add Search</button>
+      <button id="settings-btn" class="btn btn-icon" title="Settings" aria-label="Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+      <button id="import-export-btn" class="btn btn-icon" title="Import / Export" aria-label="Import / Export">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 14l4 4 4-4M10 18V8M14 6l-4-4-4 4M10 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="search-grid" class="search-grid"></main>
+
+  <div id="empty-state" class="empty-state" hidden>
+    <p>No saved searches yet.</p>
+    <button class="btn btn-accent" onclick="document.getElementById('add-search-btn').click()">+ Add your first search</button>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div id="modal-overlay" class="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2 id="modal-title">Add Search</h2>
+        <button class="btn btn-icon modal-close" aria-label="Close">&times;</button>
+      </div>
+      <form id="search-form" class="search-form">
+        <input type="hidden" id="form-id" value="">
+
+        <div class="form-group">
+          <label for="form-label">Label</label>
+          <input type="text" id="form-label" placeholder="e.g. Honda Fit" required>
+        </div>
+
+        <div class="form-group">
+          <label>URL Type</label>
+          <div class="toggle-group">
+            <button type="button" class="toggle-btn active" data-value="slug">Pattern A (Slug)</button>
+            <button type="button" class="toggle-btn" data-value="query">Pattern B (Query)</button>
+          </div>
+          <p id="url-type-hint" class="hint">Most makes work with a slug like <code>honda-fit</code>. If the search returns no results, switch to Pattern B.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="form-slug" id="slug-label">Slug</label>
+          <input type="text" id="form-slug" placeholder="e.g. honda-fit" required>
+          <p class="hint" id="slug-hint">The URL segment for this make/model (lowercase, hyphenated)</p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="form-city">City</label>
+            <input type="text" id="form-city" placeholder="e.g. chicago">
+          </div>
+          <div class="form-group">
+            <label for="form-transmission">Transmission</label>
+            <select id="form-transmission">
+              <option value="">Any</option>
+              <option value="manual">Manual</option>
+              <option value="automatic">Automatic</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="form-min-year">Min Year</label>
+            <input type="number" id="form-min-year" placeholder="e.g. 2011" min="1900" max="2099">
+          </div>
+          <div class="form-group">
+            <label for="form-max-year">Max Year</label>
+            <input type="number" id="form-max-year" placeholder="e.g. 2014" min="1900" max="2099">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="form-max-price">Max Price ($)</label>
+            <input type="number" id="form-max-price" placeholder="e.g. 9000" min="0">
+          </div>
+          <div class="form-group">
+            <label for="form-max-mileage">Max Mileage</label>
+            <input type="number" id="form-max-mileage" placeholder="e.g. 130000" min="0">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="form-radius">Radius (km)</label>
+            <input type="number" id="form-radius" placeholder="e.g. 2500" min="0">
+          </div>
+          <div class="form-group">
+            <label for="form-seller-type">Seller Type</label>
+            <select id="form-seller-type">
+              <option value="individual">Individual only</option>
+              <option value="">Any</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="form-notes">Notes <span class="optional">(optional)</span></label>
+          <textarea id="form-notes" rows="2" placeholder="Personal reminders about this search..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+          <button type="submit" class="btn btn-accent" id="form-submit-btn">Add Search</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-overlay" class="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Settings</h2>
+        <button class="btn btn-icon modal-close" aria-label="Close">&times;</button>
+      </div>
+      <form id="settings-form" class="search-form">
+        <div class="form-group">
+          <label for="settings-city">Default City</label>
+          <input type="text" id="settings-city" placeholder="e.g. chicago">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="settings-max-price">Default Max Price ($)</label>
+            <input type="number" id="settings-max-price" placeholder="e.g. 9000" min="0">
+          </div>
+          <div class="form-group">
+            <label for="settings-max-mileage">Default Max Mileage</label>
+            <input type="number" id="settings-max-mileage" placeholder="e.g. 130000" min="0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="settings-radius">Default Radius (km)</label>
+          <input type="number" id="settings-radius" placeholder="e.g. 2500" min="0">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+          <button type="submit" class="btn btn-accent">Save Settings</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Import/Export Modal -->
+  <div id="ie-overlay" class="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h2>Import / Export</h2>
+        <button class="btn btn-icon modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="ie-body">
+        <div class="form-group">
+          <label>Export</label>
+          <p class="hint">Download your saved searches as a JSON file for backup.</p>
+          <button type="button" id="export-btn" class="btn btn-primary">Download JSON</button>
+        </div>
+        <hr>
+        <div class="form-group">
+          <label>Import</label>
+          <p class="hint">Load searches from a JSON file. This will replace your current list.</p>
+          <input type="file" id="import-file" accept=".json">
+          <button type="button" id="import-btn" class="btn btn-primary" disabled>Import</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Dialog -->
+  <div id="confirm-overlay" class="modal-overlay" hidden>
+    <div class="modal modal-sm" role="alertdialog" aria-modal="true">
+      <p id="confirm-message">Are you sure?</p>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" id="confirm-cancel">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
