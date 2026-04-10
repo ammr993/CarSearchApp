@@ -205,10 +205,20 @@ function escapeAttr(str) {
 }
 
 /* ===== Search Actions ===== */
+function openInBrowser(url) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
 function openSearch(index) {
   const s = searches[index];
   const url = buildUrl(s);
-  window.open(url, '_blank', 'noopener');
+  openInBrowser(url);
   s.lastChecked = Date.now();
   saveSearches();
   render();
@@ -216,7 +226,7 @@ function openSearch(index) {
 
 function openAllSearches() {
   searches.forEach((s, i) => {
-    window.open(buildUrl(s), '_blank', 'noopener');
+    openInBrowser(buildUrl(s));
     s.lastChecked = Date.now();
   });
   saveSearches();
