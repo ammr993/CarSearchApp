@@ -1,4 +1,4 @@
-const CACHE_NAME = 'car-search-v8';
+const CACHE_NAME = 'car-search-v9';
 const ASSETS = [
   './',
   './index.html',
