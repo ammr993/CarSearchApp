@@ -13,7 +13,7 @@ const DEFAULT_SETTINGS = {
 
 const DEFAULT_SEARCHES = [
   { id: genId(), label: 'Honda Fit', urlType: 'slug', slug: 'honda-fit', city: 'chicago', minYear: 2011, maxYear: 2014, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
-  { id: genId(), label: 'Mazda Mazda3', urlType: 'slug', slug: 'mazda-3', city: 'chicago', minYear: 2015, maxYear: null, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
+  { id: genId(), label: 'Mazda Mazda3', urlType: 'query', slug: 'mazda+mazda3', city: 'chicago', minYear: 2015, maxYear: null, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
   { id: genId(), label: 'Ford Focus', urlType: 'slug', slug: 'ford-focus', city: 'chicago', minYear: 2012, maxYear: 2015, maxPrice: 9000, maxMileage: 130000, transmission: 'manual', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
   { id: genId(), label: 'Subaru Forester', urlType: 'slug', slug: 'subaru-forester', city: 'chicago', minYear: 2012, maxYear: 2013, maxPrice: 9000, maxMileage: 130000, transmission: 'manual', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
   { id: genId(), label: 'Toyota RAV4', urlType: 'slug', slug: 'toyota-rav4', city: 'chicago', minYear: 2009, maxYear: 2011, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
