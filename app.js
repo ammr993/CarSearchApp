@@ -1,6 +1,8 @@
 /* ===== Constants & Storage Keys ===== */
 const STORAGE_SEARCHES = 'mcs_searches';
 const STORAGE_SETTINGS = 'mcs_settings';
+const STORAGE_SEED_VERSION = 'mcs_seed_version';
+const CURRENT_SEED_VERSION = 2; // bump to wipe user searches and reseed defaults
 const STALE_THRESHOLD_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 /* ===== Default data ===== */
@@ -12,13 +14,19 @@ const DEFAULT_SETTINGS = {
 };
 
 const DEFAULT_SEARCHES = [
-  { id: genId(), label: 'Honda Fit', urlType: 'slug', slug: 'honda-fit', city: 'chicago', minYear: 2011, maxYear: 2014, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
-  { id: genId(), label: 'Mazda Mazda3', urlType: 'slug', slug: 'mazda-3', city: 'chicago', minYear: 2015, maxYear: null, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', sortBy: false, notes: '', lastChecked: null },
-  { id: genId(), label: 'Ford Focus', urlType: 'slug', slug: 'ford-focus', city: 'chicago', minYear: 2012, maxYear: 2015, maxPrice: 9000, maxMileage: 130000, transmission: 'manual', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
-  { id: genId(), label: 'Subaru Forester', urlType: 'slug', slug: 'subaru-forester', city: 'chicago', minYear: 2012, maxYear: 2013, maxPrice: 9000, maxMileage: 130000, transmission: 'manual', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
-  { id: genId(), label: 'Toyota RAV4', urlType: 'slug', slug: 'toyota-rav4', city: 'chicago', minYear: 2009, maxYear: 2011, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
-  { id: genId(), label: 'Lexus RX 330', urlType: 'slug', slug: 'lexus-rx', city: 'chicago', minYear: 2005, maxYear: 2006, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
-  { id: genId(), label: 'Toyota Prius', urlType: 'slug', slug: 'toyota-prius', city: 'chicago', minYear: 2013, maxYear: null, maxPrice: 9000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: '', lastChecked: null },
+  { id: genId(), label: 'Honda Fit (2011-13)', urlType: 'slug', slug: 'honda-fit', city: 'chicago', minYear: 2011, maxYear: 2013, maxPrice: 10000, maxMileage: 130000, transmission: 'manual', radius: 2500, sellerType: 'individual', notes: 'Avoid 2009, 2015. Up to 180K with records.', lastChecked: null },
+  { id: genId(), label: 'Honda Fit (2017-20)', urlType: 'slug', slug: 'honda-fit', city: 'chicago', minYear: 2017, maxYear: 2020, maxPrice: 10000, maxMileage: 130000, transmission: 'manual', radius: 2500, sellerType: 'individual', notes: 'Up to 180K with records.', lastChecked: null },
+  { id: genId(), label: 'Pontiac Vibe 1.8L', urlType: 'slug', slug: 'pontiac-vibe', city: 'chicago', minYear: 2009, maxYear: 2010, maxPrice: 10000, maxMileage: 130000, transmission: 'automatic', radius: 2500, sellerType: 'individual', notes: 'Avoid 2003, 2005-2006. Up to 170K.', lastChecked: null },
+  { id: genId(), label: 'Toyota Matrix 1.8L', urlType: 'slug', slug: 'toyota-matrix', city: 'chicago', minYear: 2010, maxYear: 2013, maxPrice: 10000, maxMileage: 130000, transmission: 'automatic', radius: 2500, sellerType: 'individual', notes: 'Avoid 2003, 2009. Up to 180K with records.', lastChecked: null },
+  { id: genId(), label: 'Scion xB', urlType: 'slug', slug: 'scion-xb', city: 'chicago', minYear: 2011, maxYear: 2015, maxPrice: 10000, maxMileage: 100000, transmission: '', radius: 2500, sellerType: 'individual', notes: 'Avoid 2008-2009. Risky above 130K.', lastChecked: null },
+  { id: genId(), label: 'Subaru Impreza', urlType: 'slug', slug: 'subaru-impreza', city: 'chicago', minYear: 2012, maxYear: 2014, maxPrice: 10000, maxMileage: 100000, transmission: 'manual', radius: 2500, sellerType: 'individual', notes: 'Avoid 2008-2011. Up to 150K with HG done.', lastChecked: null },
+  { id: genId(), label: 'Scion xD', urlType: 'slug', slug: 'scion-xd', city: 'chicago', minYear: 2010, maxYear: 2014, maxPrice: 10000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: 'Avoid 2008. Up to 180K with records.', lastChecked: null },
+  { id: genId(), label: 'Honda CR-V (2005-06)', urlType: 'slug', slug: 'honda-cr-v', city: 'chicago', minYear: 2005, maxYear: 2006, maxPrice: 10000, maxMileage: 150000, transmission: '', radius: 2500, sellerType: 'individual', notes: 'Avoid 2002-2004, 2007-2009, 2015-2016. Up to 200K.', lastChecked: null },
+  { id: genId(), label: 'Honda CR-V (2010-11)', urlType: 'slug', slug: 'honda-cr-v', city: 'chicago', minYear: 2010, maxYear: 2011, maxPrice: 10000, maxMileage: 150000, transmission: '', radius: 2500, sellerType: 'individual', notes: 'Up to 200K.', lastChecked: null },
+  { id: genId(), label: 'Toyota RAV4', urlType: 'slug', slug: 'toyota-rav4', city: 'chicago', minYear: 2009, maxYear: 2012, maxPrice: 10000, maxMileage: 130000, transmission: '', radius: 2500, sellerType: 'individual', notes: 'Avoid 2006-2008, 2019. Up to 180K.', lastChecked: null },
+  { id: genId(), label: 'Ford Focus', urlType: 'slug', slug: 'ford-focus', city: 'chicago', minYear: 2012, maxYear: 2018, maxPrice: 10000, maxMileage: 130000, transmission: 'manual', radius: 2500, sellerType: 'individual', notes: 'Manual only (avoid all automatics). Up to 200K.', lastChecked: null },
+  { id: genId(), label: 'Subaru Forester', urlType: 'slug', slug: 'subaru-forester', city: 'chicago', minYear: 2011, maxYear: 2013, maxPrice: 10000, maxMileage: 100000, transmission: 'manual', radius: 2500, sellerType: 'individual', notes: 'Avoid 2014, pre-2011 without HG. Up to 150K with HG done.', lastChecked: null },
+  { id: genId(), label: 'Mazda3 Hatch', urlType: 'slug', slug: 'mazda-3', city: 'chicago', minYear: 2015, maxYear: 2018, maxPrice: 10000, maxMileage: 120000, transmission: '', radius: 2500, sellerType: 'individual', sortBy: false, notes: 'Hatchback only. Avoid 2010-2013. Up to 160K, rust-free only.', lastChecked: null },
 ];
 
 /* ===== State ===== */
@@ -457,8 +465,10 @@ setInterval(() => {
 }, 30000); // update every 30s
 
 /* ===== Init ===== */
-if (!searches) {
+const storedSeedVersion = parseInt(localStorage.getItem(STORAGE_SEED_VERSION)) || 0;
+if (!searches || storedSeedVersion < CURRENT_SEED_VERSION) {
   searches = DEFAULT_SEARCHES;
   saveSearches();
+  localStorage.setItem(STORAGE_SEED_VERSION, CURRENT_SEED_VERSION);
 }
 render();
